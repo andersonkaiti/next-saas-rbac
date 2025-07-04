@@ -13,12 +13,9 @@ import { organizationSubject } from './subjects/organization'
 import { projectSubject } from './subjects/project'
 import { userSubject } from './subjects/user'
 
-// action: 'manage' means to manage all permissions
-// const actions = ['manage', 'create', 'invite', 'delete'] as const
-// entity: 'all' means permission on all entities
-// const subjects = ['User', 'Project', 'all'] as const
-
-// type AppAbilities = UserSubject | ProjectSubject | ['manage', 'all']
+export * from './models/organization'
+export * from './models/project'
+export * from './models/user'
 
 const appAbilitiesSchema = z.union([
   projectSubject,
