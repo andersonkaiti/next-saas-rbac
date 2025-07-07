@@ -10,6 +10,7 @@ import {
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 
+import { env } from '@saas/env'
 import { errorHandler } from './error-handler'
 import { authenticateWithPassword } from './routes/auth/authenticate-with-password'
 import { createAccount } from './routes/auth/create-account'
@@ -31,7 +32,15 @@ app.register(fastifySwagger, {
       description: 'Full-stack SaaS app with multi-tenant & RBAC',
       version: '1.0.0',
     },
-    servers: [],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   transform: jsonSchemaTransform,
 })
@@ -41,17 +50,19 @@ app.register(fastifySwaggerUI, {
 })
 
 app.register(fastifySwaggerJwt, {
-  secret: process.env.JWT_SECRET!,
+  secret: env.JWT_SECRET,
 })
 
 app.register(fastifyCors)
 
 app.register(createAccount)
 app.register(authenticateWithPassword)
+
 app.register(getProfile)
+
 app.register(requestPasswordRecover)
 app.register(resetPassword)
 
-app.listen({ port: 3333 }).then(() => {
+app.listen({ port: env.SERVER_PORT }).then(() => {
   console.log('🚀 HTTP server running!')
 })
