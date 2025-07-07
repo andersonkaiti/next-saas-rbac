@@ -9,7 +9,7 @@ export const auth = fastifyPlugin((app: FastifyInstance) => {
         const { sub } = await request.jwtVerify<{ sub: string }>()
         return sub
       } catch {
-        throw new UnauthorizedError('Invaid auth token')
+        throw new UnauthorizedError('Invalid auth token')
       }
     }
   })
