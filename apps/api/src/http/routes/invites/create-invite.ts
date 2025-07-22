@@ -86,7 +86,7 @@ export async function createInvite(app: FastifyInstance) {
           },
         })
 
-        if (inviteWithSameEmail) {
+        if (memberWithSameEmail) {
           throw new BadRequestError(
             'A member with this e-mail already belongs to your oganization.'
           )
