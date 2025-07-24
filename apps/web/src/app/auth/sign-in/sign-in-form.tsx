@@ -9,7 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { signInWithEmailAndPassword, type IActionState } from './actions'
 
-import githubIcon from '@/assets/github-icon.svg'
+import githubIcon from '@assets/github-icon.svg'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { useActionState } from 'react'
 import { signInWithGithub } from '../actions'

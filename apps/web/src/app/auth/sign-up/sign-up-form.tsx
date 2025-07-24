@@ -7,7 +7,7 @@ import { Separator } from '@components/ui/separator'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import githubIcon from '@/assets/github-icon.svg'
+import githubIcon from '@assets/github-icon.svg'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import { useActionState } from 'react'
