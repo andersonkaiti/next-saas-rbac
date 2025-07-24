@@ -7,7 +7,7 @@ import { Separator } from '@components/ui/separator'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { signInWithEmailAndPassword } from './actions'
+import { signInWithEmailAndPassword, type IActionState } from './actions'
 
 import githubIcon from '@/assets/github-icon.svg'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
@@ -15,7 +15,7 @@ import { useActionState } from 'react'
 
 export function SignInForm() {
   const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState(signInWithEmailAndPassword, {
+    useActionState<IActionState, FormData>(signInWithEmailAndPassword, {
       success: false,
       message: null,
       errors: null,

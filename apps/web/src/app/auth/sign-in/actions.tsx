@@ -2,7 +2,21 @@
 
 import { signInWithPassword } from '@http/sign-in-with-password'
 import { HTTPError } from 'ky'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
+
+export interface IActionState {
+  success: boolean
+  message: string | null
+  errors: { email?: string[]; password?: string[] } | null
+  payload: FormData | null
+}
+
+const ONE_MINUTE_IN_SECONDS = 60
+const ONE_HOUR_IN_SECONDS = ONE_MINUTE_IN_SECONDS * 60
+const ONE_DAY_IN_SECONDS = ONE_HOUR_IN_SECONDS * 24
+const ONE_WEEK_IN_SECONDS = ONE_DAY_IN_SECONDS * 7
 
 const signInSchema = z.object({
   email: z
@@ -33,7 +47,12 @@ export async function signInWithEmailAndPassword(_: unknown, data: FormData) {
       password: password,
     })
 
-    console.log(token)
+    const cookieStorage = await cookies()
+
+    cookieStorage.set('token', token, {
+      path: '/',
+      maxAge: ONE_WEEK_IN_SECONDS,
+    })
   } catch (err) {
     if (err instanceof HTTPError) {
       const { message } = await err.response.json()
@@ -56,10 +75,5 @@ export async function signInWithEmailAndPassword(_: unknown, data: FormData) {
     }
   }
 
-  return {
-    success: true,
-    message: null,
-    errors: null,
-    payload: null,
-  }
+  redirect('/')
 }
