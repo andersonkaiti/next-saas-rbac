@@ -12,6 +12,7 @@ import { signInWithEmailAndPassword, type IActionState } from './actions'
 import githubIcon from '@/assets/github-icon.svg'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { useActionState } from 'react'
+import { signInWithGithub } from '../actions'
 
 export function SignInForm() {
   const [{ success, message, errors, payload }, formAction, isPending] =
@@ -87,7 +88,12 @@ export function SignInForm() {
 
       <Separator />
 
-      <Button type="submit" variant="outline" className="w-full">
+      <Button
+        type="submit"
+        formAction={signInWithGithub}
+        variant="outline"
+        className="w-full"
+      >
         <Image src={githubIcon} className="mr-2 size-4" alt="" />
         Sign in with GitHub
       </Button>
