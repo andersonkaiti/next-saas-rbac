@@ -9,7 +9,7 @@ import { z } from 'zod'
 export interface IActionState {
   success: boolean
   message: string | null
-  errors: { email?: string[]; password?: string[] } | null
+  errors: z.inferFlattenedErrors<typeof signInSchema>['fieldErrors'] | null
   payload: FormData | null
 }
 
