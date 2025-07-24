@@ -21,6 +21,7 @@ export async function signInWithEmailAndPassword(_: unknown, data: FormData) {
       success: false,
       message: null,
       errors,
+      payload: data,
     }
   }
 
@@ -41,6 +42,7 @@ export async function signInWithEmailAndPassword(_: unknown, data: FormData) {
         success: false,
         message,
         errors: null,
+        payload: data,
       }
     }
 
@@ -50,6 +52,7 @@ export async function signInWithEmailAndPassword(_: unknown, data: FormData) {
       success: false,
       message: 'Unexpected error, try again in a few minutes.',
       errors: null,
+      payload: data,
     }
   }
 
@@ -57,5 +60,6 @@ export async function signInWithEmailAndPassword(_: unknown, data: FormData) {
     success: true,
     message: null,
     errors: null,
+    payload: null,
   }
 }

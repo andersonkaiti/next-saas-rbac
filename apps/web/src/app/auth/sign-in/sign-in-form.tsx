@@ -14,10 +14,13 @@ import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { useActionState } from 'react'
 
 export function SignInForm() {
-  const [{ success, message, errors }, formAction, isPending] = useActionState(
-    signInWithEmailAndPassword,
-    { success: false, message: null, errors: null }
-  )
+  const [{ success, message, errors, payload }, formAction, isPending] =
+    useActionState(signInWithEmailAndPassword, {
+      success: false,
+      message: null,
+      errors: null,
+      payload: null,
+    })
 
   return (
     <form action={formAction} className="space-y-4">
@@ -33,7 +36,12 @@ export function SignInForm() {
 
       <div className="space-y-2">
         <Label htmlFor="email">E-mail</Label>
-        <Input name="email" type="email" id="email" />
+        <Input
+          name="email"
+          type="email"
+          id="email"
+          defaultValue={payload?.get('email') as string}
+        />
 
         {errors?.email && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
@@ -44,7 +52,12 @@ export function SignInForm() {
 
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input name="password" type="password" id="password" />
+        <Input
+          name="password"
+          type="password"
+          id="password"
+          defaultValue={payload?.get('password') as string}
+        />
 
         {errors?.password && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
