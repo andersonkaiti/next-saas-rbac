@@ -13,7 +13,7 @@ export async function signInWithPassword({
   email,
   password,
 }: ISignInWithPasswordRequest) {
-  const result = await api
+  return await api
     .post('sessions/password', {
       json: {
         email,
@@ -21,6 +21,4 @@ export async function signInWithPassword({
       },
     })
     .json<ISignInWithPasswordResponse>()
-
-  return result
 }
