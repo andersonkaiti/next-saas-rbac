@@ -11,7 +11,11 @@ export async function Header() {
   return (
     <div className="mx-auto flex max-w-[1200px] items-center justify-between">
       <div className="flex items-center gap-3">
-        <Image src={rocketseatIcon} className="size-6" alt="Rocketseat" />
+        <Image
+          src={rocketseatIcon}
+          className="size-6 dark:invert"
+          alt="Rocketseat"
+        />
 
         <Slash className="text-border size-3 -rotate-[24deg]" />
 
