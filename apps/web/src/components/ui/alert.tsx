@@ -11,6 +11,8 @@ const alertVariants = cva(
         default: 'bg-background text-background-foreground',
         destructive:
           'text-destructive border-destructive/50 bg-background [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90',
+        success:
+          'text-green-300 border-green-300/50 bg-background [&>svg]:text-current *:data-[slot=alert-description]:text-green-300/90',
       },
     },
     defaultVariants: {
@@ -64,3 +66,4 @@ function AlertDescription({
 }
 
 export { Alert, AlertDescription, AlertTitle }
+
