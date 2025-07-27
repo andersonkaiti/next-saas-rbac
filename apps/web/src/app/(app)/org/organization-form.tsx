@@ -6,20 +6,53 @@ import { Checkbox } from '@components/ui/checkbox'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { AlertTriangle, Loader2 } from 'lucide-react'
-import { useActionState } from 'react'
-import {
-  createOrganizationAction,
-  type IActionState,
-} from '../create-organization/actions'
+import { useActionState, useId } from 'react'
+import { type IActionState } from './actions'
+import type { OrganizationSchema } from './organization-schema'
 
-export function OrganizationForm() {
+interface IOrganizationFormProps {
+  initialData?: OrganizationSchema | null
+  action: (_: unknown, data: FormData) => Promise<IActionState>
+}
+
+function objectToFormData(obj: Record<string, any> | null): FormData {
+  const formData = new FormData()
+
+  if (!obj) {
+    return formData
+  }
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key]
+      if (value instanceof File || value instanceof Blob) {
+        formData.append(key, value)
+      } else if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          formData.append(`${key}[${index}]`, item)
+        })
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value.toString())
+      }
+    }
+  }
+
+  return formData
+}
+
+export function OrganizationForm({
+  initialData = null,
+  action,
+}: IOrganizationFormProps) {
   const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(createOrganizationAction, {
+    useActionState<IActionState, FormData>(action, {
       success: false,
       message: null,
       errors: null,
-      payload: null,
+      payload: objectToFormData(initialData),
     })
+
+  const shouldAttachUsersByDomainId = useId()
 
   return (
     <form action={formAction} className="space-y-4">
@@ -45,11 +78,7 @@ export function OrganizationForm() {
 
       <div className="space-y-2">
         <Label htmlFor="name">Organization name</Label>
-        <Input
-          name="name"
-          id="name"
-          defaultValue={payload?.get('name') as string}
-        />
+        <Input name="name" id="name" defaultValue={initialData?.name} />
 
         {errors?.name && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
@@ -65,7 +94,7 @@ export function OrganizationForm() {
           id="domain"
           inputMode="url"
           placeholder="example.com"
-          defaultValue={payload?.get('domain') as string}
+          defaultValue={initialData?.domain ?? undefined}
         />
 
         {errors?.domain && (
@@ -79,10 +108,11 @@ export function OrganizationForm() {
         <div className="flex items-start space-x-2">
           <Checkbox
             name="shouldAttachUsersByDomain"
-            id="shouldAttachUsersByDomain"
+            id={shouldAttachUsersByDomainId}
             className="mt-1.5"
+            defaultChecked={initialData?.shouldAttachUsersByDomain}
           />
-          <label htmlFor="shouldAttachUsersByDomain" className="space-y-1">
+          <label htmlFor={shouldAttachUsersByDomainId} className="space-y-1">
             <span className="text-sm leading-none font-medium">
               Auto-join new members
             </span>

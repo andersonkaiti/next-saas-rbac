@@ -1,4 +1,5 @@
 import { Header } from '@components/header'
+import { createOrganizationAction } from '../org/actions'
 import { OrganizationForm } from '../org/organization-form'
 
 export default function CreateOrganization() {
@@ -9,7 +10,7 @@ export default function CreateOrganization() {
       <main className="mx-auto w-full max-w-[1200px] space-y-4 py-4">
         <h1 className="text-2xl font-bold">Create organization</h1>
 
-        <OrganizationForm />
+        <OrganizationForm action={createOrganizationAction} />
       </main>
     </div>
   )
