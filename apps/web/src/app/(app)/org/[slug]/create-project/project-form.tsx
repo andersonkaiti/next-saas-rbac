@@ -5,8 +5,10 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Textarea } from '@components/ui/textarea'
+import { useQueryClient } from '@tanstack/react-query'
 import { AlertTriangle, Loader2 } from 'lucide-react'
-import { useActionState } from 'react'
+import { useParams } from 'next/navigation'
+import { useActionState, useEffect } from 'react'
 import { createProjectAction, type IActionState } from './actions'
 
 export function ProjectForm() {
@@ -17,6 +19,16 @@ export function ProjectForm() {
       errors: null,
       payload: null,
     })
+
+  const queryClient = useQueryClient()
+
+  const { slug: org } = useParams<{ slug: string }>()
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [org, 'projects'],
+    })
+  }, [success])
 
   return (
     <form action={formAction} className="space-y-4">
