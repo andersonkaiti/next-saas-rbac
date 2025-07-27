@@ -7,6 +7,7 @@ import { getMembership } from '@http/get-membership'
 import { getOrganization } from '@http/get-organization'
 import { organizationSchema } from '@saas/auth'
 import { ArrowLeftRight, Crown } from 'lucide-react'
+import { RemoveMemberButton } from './remove-member-button'
 
 export async function MemberList() {
   const currentOrg = await getCurrentOrg()
@@ -73,6 +74,16 @@ export async function MemberList() {
                         <ArrowLeftRight className="mr-2 size-4" />
                         Transfer ownership
                       </Button>
+                    )}
+
+                    {permissions?.can('delete', 'User') && (
+                      <RemoveMemberButton
+                        memberId={member.id}
+                        disabled={
+                          member.userId === membership.userId ||
+                          member.userId === organization.ownerId
+                        }
+                      />
                     )}
                   </div>
                 </TableCell>
