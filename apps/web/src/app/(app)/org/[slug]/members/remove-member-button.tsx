@@ -11,7 +11,7 @@ import {
 import { AlertTriangle, UserMinus } from 'lucide-react'
 import { removeMemberAction } from './actions'
 
-interface IDeleteMemberButtonProps extends React.ComponentProps<'button'> {
+interface IDeleteMemberButtonProps extends React.ComponentProps<typeof Button> {
   memberId: string
 }
 
