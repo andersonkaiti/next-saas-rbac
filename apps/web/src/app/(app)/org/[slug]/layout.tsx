@@ -1,3 +1,4 @@
+import { Header } from '@components/header'
 import { Tabs } from '@components/tabs'
 
 export default async function OrgLayout({
@@ -7,7 +8,11 @@ export default async function OrgLayout({
 }>) {
   return (
     <div className="space-y-4 py-4">
-      <Tabs />
+      <div>
+        <Header />
+
+        <Tabs />
+      </div>
 
       <main className="mx-auto w-full max-w-[1200px] space-y-4">
         {children}
