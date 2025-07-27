@@ -1,3 +1,5 @@
+'use server'
+
 import { createOrganization } from '@http/create-organization'
 import { HTTPError } from 'ky'
 import z from 'zod'
