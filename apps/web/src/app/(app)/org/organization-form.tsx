@@ -7,7 +7,10 @@ import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import { useActionState } from 'react'
-import { createOrganizationAction, type IActionState } from './actions'
+import {
+  createOrganizationAction,
+  type IActionState,
+} from '../create-organization/actions'
 
 export function OrganizationForm() {
   const [{ success, message, errors, payload }, formAction, isPending] =
