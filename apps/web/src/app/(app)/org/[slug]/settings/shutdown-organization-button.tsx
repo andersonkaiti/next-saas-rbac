@@ -19,7 +19,7 @@ export function ShutdownOrganizationButton() {
 
     const currentOrg = await getCurrentOrg()
 
-    await shutdownOrganization({ org: currentOrg as string })
+    await shutdownOrganization(currentOrg as string)
 
     redirect('/')
   }
