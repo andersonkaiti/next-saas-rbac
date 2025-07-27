@@ -8,31 +8,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@components/ui/dialog'
-import { AlertTriangle, UserMinus } from 'lucide-react'
-import { removeMemberAction } from './actions'
+import { AlertTriangle, XOctagon } from 'lucide-react'
+import type { ComponentProps } from 'react'
+import { revokeInviteAction } from './actions'
 
-interface IDeleteMemberButtonProps extends React.ComponentProps<typeof Button> {
-  memberId: string
+interface IRevokeInviteButtonProps extends ComponentProps<typeof Button> {
+  inviteId: string
 }
 
-export function RemoveMemberButton({
-  memberId,
-  disabled,
+export function RevokeInviteButton({
+  inviteId,
   ...props
-}: IDeleteMemberButtonProps) {
-  if (disabled) {
-    return (
-      <Button size="sm" variant="destructive" className="w-fit" disabled>
-        <UserMinus className="mr-2 size-4" />
-      </Button>
-    )
-  }
-
+}: IRevokeInviteButtonProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" variant="destructive" className="w-fit">
-          <UserMinus className="mr-2 size-4" />
+        <Button size="sm" variant="destructive">
+          <XOctagon className="mr-2 size-4" />
+          Revoke invite
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -41,7 +34,7 @@ export function RemoveMemberButton({
 
           <DialogHeader>
             <DialogTitle>
-              Are you absolutely sure you want to remove this member?
+              Are you absolutely sure you want to revoke this invite?
             </DialogTitle>
             <DialogDescription>This action cannot be undone.</DialogDescription>
           </DialogHeader>
@@ -52,9 +45,9 @@ export function RemoveMemberButton({
             <Button variant="ghost">Cancel</Button>
           </DialogClose>
 
-          <form action={removeMemberAction.bind(null, memberId)}>
+          <form action={revokeInviteAction.bind(null, inviteId)}>
             <Button {...props} type="submit" size="sm" variant="destructive">
-              Remove member
+              Revoke invite
             </Button>
           </form>
         </div>

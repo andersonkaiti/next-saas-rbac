@@ -11,7 +11,7 @@ export async function revokeInvite(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
-    .post(
+    .delete(
       '/organizations/:slug/invites/:inviteId',
       {
         schema: {
@@ -23,7 +23,7 @@ export async function revokeInvite(app: FastifyInstance) {
             inviteId: z.uuid(),
           }),
           response: {
-            204: z.null()
+            204: z.null(),
           },
         },
       },
@@ -38,9 +38,7 @@ export async function revokeInvite(app: FastifyInstance) {
         const { cannot } = getUserPermissions(userId, membership.role)
 
         if (cannot('delete', 'Invite')) {
-          throw new UnauthorizedError(
-            "You're not allowed to delete an invite."
-          )
+          throw new UnauthorizedError("You're not allowed to delete an invite.")
         }
 
         const invite = await prisma.invite.findUnique({
@@ -51,15 +49,13 @@ export async function revokeInvite(app: FastifyInstance) {
         })
 
         if (!invite) {
-          throw new BadRequestError(
-            'Invite not found.'
-          )
+          throw new BadRequestError('Invite not found.')
         }
 
         await prisma.invite.delete({
           where: {
-            id: inviteId
-          }
+            id: inviteId,
+          },
         })
 
         return reply.status(204).send()
