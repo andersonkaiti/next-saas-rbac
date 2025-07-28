@@ -11,10 +11,13 @@ import { signInWithEmailAndPassword, type IActionState } from './actions'
 
 import githubIcon from '@assets/github-icon.svg'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
+import { useSearchParams } from 'next/navigation'
 import { useActionState } from 'react'
 import { signInWithGithub } from '../actions'
 
 export function SignInForm() {
+  const searchParams = useSearchParams()
+
   const [{ success, message, errors, payload }, formAction, isPending] =
     useActionState<IActionState, FormData>(signInWithEmailAndPassword, {
       success: false,
@@ -41,7 +44,9 @@ export function SignInForm() {
           name="email"
           type="email"
           id="email"
-          defaultValue={payload?.get('email') as string}
+          defaultValue={
+            searchParams.get('email') ?? (payload?.get('email') as string)
+          }
         />
 
         {errors?.email && (
