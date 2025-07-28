@@ -24,6 +24,7 @@ export function RemoveMemberButton({
     return (
       <Button size="sm" variant="destructive" className="w-fit" disabled>
         <UserMinus className="mr-2 size-4" />
+        Remove
       </Button>
     )
   }
@@ -33,6 +34,7 @@ export function RemoveMemberButton({
       <DialogTrigger asChild>
         <Button size="sm" variant="destructive" className="w-fit">
           <UserMinus className="mr-2 size-4" />
+          Remove
         </Button>
       </DialogTrigger>
       <DialogContent>
