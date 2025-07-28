@@ -1,3 +1,4 @@
+import { getCurrentOrg } from '@auth/auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar'
 import { Button } from '@components/ui/button'
 import {
@@ -7,38 +8,51 @@ import {
   CardHeader,
   CardTitle,
 } from '@components/ui/card'
+import { getProjects } from '@http/get-projects'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { ArrowRight } from 'lucide-react'
 
-export function ProjectList() {
+dayjs.extend(relativeTime)
+
+export async function ProjectList() {
+  const currentOrg = await getCurrentOrg()
+
+  const { projects } = await getProjects(currentOrg as string)
+
   return (
     <div className="grid grid-cols-3 gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Projeto 01</CardTitle>
-          <CardDescription className="line-clamp-2 leading-relaxed">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum,
-            ut. Distinctio id dignissimos aspernatur sint, soluta aliquid
-            ducimus, ex praesentium nemo aperiam incidunt, temporibus at quos
-            provident laudantium fuga nihil.
-          </CardDescription>
-        </CardHeader>
-        <CardFooter className="flex items-center gap-1.5">
-          <Avatar className="size-4">
-            <AvatarFallback />
-            <AvatarImage src="https://github.com/andersonkaiti.png" />
-          </Avatar>
+      {projects.map((project) => (
+        <Card key={project.id}>
+          <CardHeader>
+            <CardTitle className="text-2xl font-medium">
+              {project.name}
+            </CardTitle>
+            <CardDescription className="line-clamp-2 leading-relaxed">
+              {project.description}
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="mt-auto flex items-center gap-1.5">
+            <Avatar className="size-4">
+              <AvatarFallback />
+              {project.owner.avatarUrl && (
+                <AvatarImage src={project.owner.avatarUrl} />
+              )}
+            </Avatar>
 
-          <span className="text-muted-foreground text-xs">
-            Created by{' '}
-            <span className="text-foreground font-medium">Anderson Kaiti</span>{' '}
-            a day ago
-          </span>
+            <span className="text-muted-foreground text-xs">
+              <span className="text-foreground font-medium">
+                {project.owner.name}
+              </span>{' '}
+              {dayjs(project.createdAt).fromNow()}
+            </span>
 
-          <Button size="xs" className="ml-auto" variant="outline">
-            View <ArrowRight className="ml-2 size-3" />
-          </Button>
-        </CardFooter>
-      </Card>
+            <Button size="xs" className="ml-auto" variant="outline">
+              View <ArrowRight className="ml-2 size-3" />
+            </Button>
+          </CardFooter>
+        </Card>
+      ))}
     </div>
   )
 }
