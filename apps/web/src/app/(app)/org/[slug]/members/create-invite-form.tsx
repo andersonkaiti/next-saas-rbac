@@ -45,8 +45,8 @@ export function CreateInviteForm() {
         </Alert>
       )}
 
-      <div className="flex items-start gap-2">
-        <div className="flex-1 space-y-2">
+      <div className="flex flex-col items-start gap-2 sm:flex-row">
+        <div className="w-full space-y-2">
           <Input
             name="email"
             id="email"
@@ -63,7 +63,7 @@ export function CreateInviteForm() {
         </div>
 
         <Select name="role" defaultValue="MEMBER">
-          <SelectTrigger>
+          <SelectTrigger className="w-full sm:w-fit">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -73,7 +73,7 @@ export function CreateInviteForm() {
           </SelectContent>
         </Select>
 
-        <Button type="submit" className="w-fit" disabled={isPending}>
+        <Button type="submit" className="w-full sm:w-fit" disabled={isPending}>
           {isPending ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (

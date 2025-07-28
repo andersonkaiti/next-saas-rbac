@@ -14,8 +14,8 @@ export async function Tabs() {
   const canGetProjects = permissions?.can('get', 'Project')
 
   return (
-    <div className="border-b py-4">
-      <nav className="mx-auto flex max-w-[1200px] items-center gap-2">
+    <div className="border-b p-4">
+      <nav className="mx-auto flex max-w-[1200px] items-center justify-center gap-2 sm:justify-start">
         {canGetProjects && (
           <Button
             variant="ghost"
