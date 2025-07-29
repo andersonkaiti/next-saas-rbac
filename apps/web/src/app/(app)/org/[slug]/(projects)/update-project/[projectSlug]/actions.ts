@@ -1,16 +1,10 @@
 'use server'
 
 import { getCurrentOrg } from '@auth/auth'
-import { createProject } from '@http/create-project'
+import { updateProject } from '@http/update-project'
 import { HTTPError } from 'ky'
 import z from 'zod'
-
-const projectSchema = z.object({
-  name: z
-    .string()
-    .min(4, { message: 'Please, include at least 4 characters.' }),
-  description: z.string(),
-})
+import { projectSchema } from '../../project-schema'
 
 export interface IActionState {
   success: boolean
@@ -19,7 +13,11 @@ export interface IActionState {
   payload: FormData | null
 }
 
-export async function createProjectAction(_: unknown, data: FormData) {
+export async function updateProjectAction(
+  projectId: string,
+  _: unknown,
+  data: FormData
+) {
   const result = projectSchema.safeParse(Object.fromEntries(data))
 
   if (!result.success) {
@@ -36,8 +34,9 @@ export async function createProjectAction(_: unknown, data: FormData) {
   const { name, description } = result.data
 
   try {
-    await createProject({
+    await updateProject({
       org: (await getCurrentOrg()) as string,
+      projectId,
       name,
       description,
     })

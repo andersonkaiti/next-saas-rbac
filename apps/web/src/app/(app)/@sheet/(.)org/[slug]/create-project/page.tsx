@@ -1,8 +1,9 @@
+import { createProjectAction } from '@/app/(app)/org/[slug]/(projects)/create-project/actions'
 import { ability } from '@auth/auth'
 import { InterceptedSheetContent } from '@components/intercepted-sheet-content'
 import { Sheet, SheetHeader, SheetTitle } from '@components/ui/sheet'
 import { redirect } from 'next/navigation'
-import { ProjectForm } from '../../../../org/[slug]/create-project/project-form'
+import { ProjectForm } from '../../../../org/[slug]/(projects)/project-form'
 
 export default async function CreateProject() {
   const permissions = await ability()
@@ -19,7 +20,7 @@ export default async function CreateProject() {
         </SheetHeader>
 
         <div className="py-4">
-          <ProjectForm />
+          <ProjectForm action={createProjectAction} />
         </div>
       </InterceptedSheetContent>
     </Sheet>

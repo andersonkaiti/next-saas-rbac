@@ -1,6 +1,7 @@
 import { ability } from '@auth/auth'
 import { redirect } from 'next/navigation'
-import { ProjectForm } from './project-form'
+import { ProjectForm } from '../project-form'
+import { createProjectAction } from './actions'
 
 export default async function CreateProject() {
   const permissions = await ability()
@@ -13,7 +14,7 @@ export default async function CreateProject() {
     <main className="mx-auto w-full max-w-[1200px] space-y-4 py-4">
       <h1 className="text-2xl font-bold">Create project</h1>
 
-      <ProjectForm />
+      <ProjectForm action={createProjectAction} />
     </main>
   )
 }

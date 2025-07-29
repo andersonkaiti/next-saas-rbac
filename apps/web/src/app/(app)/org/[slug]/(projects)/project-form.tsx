@@ -9,11 +9,17 @@ import { useQueryClient } from '@tanstack/react-query'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
-import { createProjectAction, type IActionState } from './actions'
+import { type IActionState } from './create-project/actions'
+import type { ProjectSchema } from './project-schema'
 
-export function ProjectForm() {
+interface IProjectForm {
+  initialData?: (ProjectSchema & { slug: string }) | null
+  action: (_: unknown, data: FormData) => Promise<IActionState>
+}
+
+export function ProjectForm({ action, initialData }: IProjectForm) {
   const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(createProjectAction, {
+    useActionState<IActionState, FormData>(action, {
       success: false,
       message: null,
       errors: null,
@@ -57,7 +63,7 @@ export function ProjectForm() {
         <Input
           name="name"
           id="name"
-          defaultValue={payload?.get('name') as string}
+          defaultValue={initialData?.name ?? (payload?.get('name') as string)}
         />
 
         {errors?.name && (
@@ -72,7 +78,9 @@ export function ProjectForm() {
         <Textarea
           name="description"
           id="description"
-          defaultValue={payload?.get('description') as string}
+          defaultValue={
+            initialData?.description ?? (payload?.get('description') as string)
+          }
         />
 
         {errors?.description && (
