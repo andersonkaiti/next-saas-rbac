@@ -1,13 +1,13 @@
 import { ability, getCurrentOrg } from '@auth/auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar'
-import { Button } from '@components/ui/button'
 import { Table, TableBody, TableCell, TableRow } from '@components/ui/table'
 import { getMembers } from '@http/get-members'
 import { getMembership } from '@http/get-membership'
 import { getOrganization } from '@http/get-organization'
 import { organizationSchema } from '@saas/auth'
-import { ArrowLeftRight, Crown } from 'lucide-react'
+import { Crown } from 'lucide-react'
 import { RemoveMemberButton } from './remove-member-button'
+import { TransferOwnership } from './transfer-ownership'
 import { UpdateMemberRoleSelect } from './update-member-role-select'
 
 export async function MemberList() {
@@ -70,12 +70,7 @@ export async function MemberList() {
                     {permissions?.can(
                       'transfer_ownership',
                       authOrganization
-                    ) && (
-                      <Button size="sm" variant="ghost">
-                        <ArrowLeftRight className="mr-2 size-4" />
-                        Transfer ownership
-                      </Button>
-                    )}
+                    ) && <TransferOwnership transferToUserId={member.userId} />}
 
                     <UpdateMemberRoleSelect
                       memberId={member.id}

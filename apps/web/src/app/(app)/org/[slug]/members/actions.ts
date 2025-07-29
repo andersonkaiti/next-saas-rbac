@@ -4,6 +4,7 @@ import { getCurrentOrg } from '@auth/auth'
 import { createInvite } from '@http/create-invite'
 import { removeMember } from '@http/remove-member'
 import { revokeInvite } from '@http/revoke-invite'
+import { transferOwnership } from '@http/transfer-ownership'
 import { updateMember } from '@http/update-member'
 import { roleSchema, type Role } from '@saas/auth'
 import { HTTPError } from 'ky'
@@ -108,4 +109,15 @@ export async function revokeInviteAction(inviteId: string) {
   })
 
   revalidateTag(`${currentOrg}/invites`)
+}
+
+export async function transferOwnershipAction(transferToUserId: string) {
+  const currentOrg = await getCurrentOrg()
+
+  await transferOwnership({
+    org: currentOrg as string,
+    transferToUserId,
+  })
+
+  revalidateTag(`${currentOrg}/members`)
 }
