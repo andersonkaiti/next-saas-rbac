@@ -20,6 +20,10 @@ export interface IGetProjectsResponse {
 
 export async function getProjects(org: string) {
   return await api
-    .get(`organizations/${org}/projects`)
+    .get(`organizations/${org}/projects`, {
+      next: {
+        tags: [`${org}/projects`],
+      },
+    })
     .json<IGetProjectsResponse>()
 }

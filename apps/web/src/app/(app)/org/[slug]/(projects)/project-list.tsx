@@ -8,12 +8,19 @@ import {
   CardHeader,
   CardTitle,
 } from '@components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@components/ui/dropdown-menu'
 import { getProjects } from '@http/get-projects'
 import { projectSchema } from '@saas/auth'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { ArrowRight, Settings } from 'lucide-react'
+import { ArrowRight, RotateCcw, Settings } from 'lucide-react'
 import Link from 'next/link'
+import { DeleteProjectButton } from './delete-project-button'
 
 dayjs.extend(relativeTime)
 
@@ -35,13 +42,33 @@ export async function ProjectList() {
               </CardTitle>
 
               {permissions?.can('update', projectSchema.parse(project)) && (
-                <Button size="xs" variant="ghost" className="size-6" asChild>
-                  <Link
-                    href={`/org/${currentOrg}/update-project/${project.slug}`}
-                  >
-                    <Settings />
-                  </Link>
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="xs" variant="ghost" className="size-6">
+                      <Settings />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                      <Button
+                        asChild
+                        variant="ghost"
+                        className="flex w-full items-center justify-start px-2 py-1.5 text-sm"
+                      >
+                        <Link
+                          href={`/org/${currentOrg}/update-project/${project.slug}`}
+                          className="flex w-fit items-center justify-between"
+                        >
+                          <RotateCcw className="mr-2 size-4" />
+                          Update
+                        </Link>
+                      </Button>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <DeleteProjectButton projectId={project.id} />
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </div>
             <CardDescription className="line-clamp-2 leading-relaxed">
