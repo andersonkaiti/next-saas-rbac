@@ -1,8 +1,8 @@
 import { ability, getCurrentOrg } from '@auth/auth'
 import { getProject } from '@http/get-project'
 import { redirect } from 'next/navigation'
+import { updateProjectAction } from '../../actions'
 import { ProjectForm } from '../../project-form'
-import { updateProjectAction } from './actions'
 
 export default async function UpdateProject({
   params,

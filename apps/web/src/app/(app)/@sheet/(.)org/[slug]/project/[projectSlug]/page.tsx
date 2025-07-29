@@ -1,8 +1,8 @@
-import { ProjectCard } from '@/app/(app)/org/[slug]/(projects)/project/[projectSlug]/project-card'
 import { getCurrentOrg } from '@auth/auth'
 import { InterceptedDialogContent } from '@components/intercepted-dialog-content'
 import { Dialog, DialogHeader, DialogTitle } from '@components/ui/dialog'
 import { getProject } from '@http/get-project'
+import { ProjectCard } from '../../../../../org/[slug]/(projects)/project/[projectSlug]/project-card'
 
 export default async function Project({
   params,

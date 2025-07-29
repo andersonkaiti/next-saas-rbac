@@ -9,7 +9,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
-import { type IActionState } from './create-project/actions'
+import type { IActionState } from './actions'
 import type { ProjectSchema } from './project-schema'
 
 interface IProjectForm {

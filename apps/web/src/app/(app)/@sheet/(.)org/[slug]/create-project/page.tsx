@@ -1,8 +1,8 @@
-import { createProjectAction } from '@/app/(app)/org/[slug]/(projects)/create-project/actions'
 import { ability } from '@auth/auth'
 import { InterceptedSheetContent } from '@components/intercepted-sheet-content'
 import { Sheet, SheetHeader, SheetTitle } from '@components/ui/sheet'
 import { redirect } from 'next/navigation'
+import { createProjectAction } from '../../../../org/[slug]/(projects)/actions'
 import { ProjectForm } from '../../../../org/[slug]/(projects)/project-form'
 
 export default async function CreateProject() {

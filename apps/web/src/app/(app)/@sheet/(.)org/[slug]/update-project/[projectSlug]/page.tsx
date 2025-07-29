@@ -3,8 +3,8 @@ import { InterceptedSheetContent } from '@components/intercepted-sheet-content'
 import { Sheet, SheetHeader, SheetTitle } from '@components/ui/sheet'
 import { getProject } from '@http/get-project'
 import { redirect } from 'next/navigation'
+import { updateProjectAction } from '../../../../../org/[slug]/(projects)/actions'
 import { ProjectForm } from '../../../../../org/[slug]/(projects)/project-form'
-import { updateProjectAction } from '../../../../../org/[slug]/(projects)/update-project/[projectSlug]/actions'
 
 export default async function UpdateProject({
   params,
