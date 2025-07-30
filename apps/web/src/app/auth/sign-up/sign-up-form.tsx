@@ -16,12 +16,7 @@ import { signUpAction, type IActionState } from './actions'
 
 export function SignUpForm() {
   const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(signUpAction, {
-      success: false,
-      message: null,
-      errors: null,
-      payload: null,
-    })
+    useActionState<IActionState, FormData>(signUpAction, {} as IActionState)
 
   return (
     <form action={formAction} className="space-y-4">

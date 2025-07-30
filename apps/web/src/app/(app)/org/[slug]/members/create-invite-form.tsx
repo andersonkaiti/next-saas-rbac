@@ -16,12 +16,10 @@ import { createInviteAction, type IActionState } from './actions'
 
 export function CreateInviteForm() {
   const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(createInviteAction, {
-      success: false,
-      message: null,
-      errors: null,
-      payload: null,
-    })
+    useActionState<IActionState, FormData>(
+      createInviteAction,
+      {} as IActionState
+    )
 
   return (
     <form action={formAction} className="space-y-4">

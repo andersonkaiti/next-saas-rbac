@@ -46,11 +46,8 @@ export function OrganizationForm({
 }: IOrganizationFormProps) {
   const [{ success, message, errors, payload }, formAction, isPending] =
     useActionState<IActionState, FormData>(action, {
-      success: false,
-      message: null,
-      errors: null,
       payload: objectToFormData(initialData),
-    })
+    } as IActionState)
 
   const shouldAttachUsersByDomainId = useId()
 
@@ -78,7 +75,11 @@ export function OrganizationForm({
 
       <div className="space-y-2">
         <Label htmlFor="name">Organization name</Label>
-        <Input name="name" id="name" defaultValue={initialData?.name} />
+        <Input
+          name="name"
+          id="name"
+          defaultValue={initialData?.name ?? (payload?.get('name') as string)}
+        />
 
         {errors?.name && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
@@ -94,7 +95,9 @@ export function OrganizationForm({
           id="domain"
           inputMode="url"
           placeholder="example.com"
-          defaultValue={initialData?.domain ?? undefined}
+          defaultValue={
+            initialData?.domain ?? (payload?.get('domain') as string)
+          }
         />
 
         {errors?.domain && (
@@ -110,7 +113,10 @@ export function OrganizationForm({
             name="shouldAttachUsersByDomain"
             id={shouldAttachUsersByDomainId}
             className="mt-1.5"
-            defaultChecked={initialData?.shouldAttachUsersByDomain}
+            defaultChecked={
+              initialData?.shouldAttachUsersByDomain ??
+              (payload?.get('shouldAttachUsersByDomain') as unknown as boolean)
+            }
           />
           <label htmlFor={shouldAttachUsersByDomainId} className="space-y-1">
             <span className="text-sm leading-none font-medium">

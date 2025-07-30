@@ -19,12 +19,10 @@ export function SignInForm() {
   const searchParams = useSearchParams()
 
   const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(signInWithEmailAndPassword, {
-      success: false,
-      message: null,
-      errors: null,
-      payload: null,
-    })
+    useActionState<IActionState, FormData>(
+      signInWithEmailAndPassword,
+      {} as IActionState
+    )
 
   return (
     <form action={formAction} className="space-y-4">

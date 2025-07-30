@@ -19,12 +19,7 @@ interface IProjectForm {
 
 export function ProjectForm({ action, initialData }: IProjectForm) {
   const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(action, {
-      success: false,
-      message: null,
-      errors: null,
-      payload: null,
-    })
+    useActionState<IActionState, FormData>(action, {} as IActionState)
 
   const queryClient = useQueryClient()
 
