@@ -9,8 +9,10 @@
   ],
   "routes": [
     {
-      "src": "(.*)",
+      "src": "/(.*)",
       "dest": "dist/http/server.js"
     }
-  ]
+  ],
+  "buildCommand": "pnpm build",
+  "outputDirectory": "dist"
 }
