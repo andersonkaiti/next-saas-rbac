@@ -11,6 +11,5 @@
       "src": "/(.*)",
       "dest": "apps/api/dist/http/server.js"
     }
-  ],
-  "outputDirectory": "apps/api/dist"
+  ]
 }
