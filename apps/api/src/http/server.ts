@@ -1,7 +1,7 @@
 import fastifyCors from '@fastify/cors'
 import fastifySwaggerJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUI from '@fastify/swagger-ui'
+import scalarFastifyApiReference from '@scalar/fastify-api-reference'
 import { fastify } from 'fastify'
 import {
   jsonSchemaTransform,
@@ -69,8 +69,11 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
-app.register(fastifySwaggerUI, {
+app.register(scalarFastifyApiReference, {
   routePrefix: '/docs',
+  configuration: {
+    theme: 'kepler',
+  },
 })
 
 app.register(fastifySwaggerJwt, {
