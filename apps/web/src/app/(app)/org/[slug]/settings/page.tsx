@@ -19,15 +19,13 @@ export default async function Settings() {
   const canUpdateOrganization = permissions?.can('update', 'Organization')
   const canGetBilling = permissions?.can('get', 'Billing')
 
-  const canGetMembers = permissions?.can('get', 'User')
-  const canGetProjects = permissions?.can('get', 'Project')
   const canShutdownOrganization = permissions?.can('delete', 'Organization')
 
   const { organization } = await getOrganization(currentOrg as string)
 
   return (
-    <main className="mx-auto w-full max-w-[1200px] space-y-4 py-4">
-      <h1 className="text-2xl font-bold">Settings</h1>
+    <>
+      <h1 className="w-fit text-2xl font-bold">Settings</h1>
 
       <div className="space-y-4">
         {canUpdateOrganization && (
@@ -64,6 +62,6 @@ export default async function Settings() {
           </Card>
         )}
       </div>
-    </main>
+    </>
   )
 }
