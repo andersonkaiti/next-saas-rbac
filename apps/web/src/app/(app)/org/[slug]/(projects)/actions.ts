@@ -129,5 +129,5 @@ export async function deleteProjectAction(projectId: string) {
     projectId,
   })
 
-  revalidateTag(`${currentOrg}/projects`)
+  revalidateTag(`${currentOrg}/projects`, {})
 }

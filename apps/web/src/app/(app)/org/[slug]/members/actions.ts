@@ -48,7 +48,7 @@ export async function createInviteAction(_: unknown, data: FormData) {
       role,
     })
 
-    revalidateTag(`${currentOrg}/invites`)
+    revalidateTag(`${currentOrg}/invites`, {})
   } catch (err) {
     if (err instanceof HTTPError) {
       const { message } = await err.response.json()
@@ -85,7 +85,7 @@ export async function removeMemberAction(memberId: string) {
     memberId,
   })
 
-  revalidateTag(`${currentOrg}/members`)
+  revalidateTag(`${currentOrg}/members`, {})
 }
 
 export async function updateMemberAction(memberId: string, role: Role) {
@@ -97,7 +97,7 @@ export async function updateMemberAction(memberId: string, role: Role) {
     role,
   })
 
-  revalidateTag(`${currentOrg}/members`)
+  revalidateTag(`${currentOrg}/members`, {})
 }
 
 export async function revokeInviteAction(inviteId: string) {
@@ -108,7 +108,7 @@ export async function revokeInviteAction(inviteId: string) {
     inviteId,
   })
 
-  revalidateTag(`${currentOrg}/invites`)
+  revalidateTag(`${currentOrg}/invites`, {})
 }
 
 export async function transferOwnershipAction(transferToUserId: string) {
@@ -119,5 +119,5 @@ export async function transferOwnershipAction(transferToUserId: string) {
     transferToUserId,
   })
 
-  revalidateTag(`${currentOrg}/members`)
+  revalidateTag(`${currentOrg}/members`, {})
 }
