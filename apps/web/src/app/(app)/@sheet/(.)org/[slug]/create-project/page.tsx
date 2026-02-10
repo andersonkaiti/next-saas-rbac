@@ -16,7 +16,7 @@ export default async function CreateProject() {
     <Sheet defaultOpen>
       <InterceptedSheetContent>
         <SheetHeader className="p-0">
-          <SheetTitle>Create organization</SheetTitle>
+          <SheetTitle>Create project</SheetTitle>
         </SheetHeader>
 
         <div className="py-4">

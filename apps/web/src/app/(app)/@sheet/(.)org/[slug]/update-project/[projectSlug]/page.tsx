@@ -33,7 +33,7 @@ export default async function UpdateProject({
     <Sheet defaultOpen>
       <InterceptedSheetContent>
         <SheetHeader className="p-0">
-          <SheetTitle>Create organization</SheetTitle>
+          <SheetTitle>Update project</SheetTitle>
         </SheetHeader>
 
         <div className="py-4">
