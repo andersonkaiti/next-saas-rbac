@@ -35,6 +35,7 @@ export function SignUpForm() {
         <Input
           name="name"
           id="name"
+          placeholder="Seu nome completo"
           defaultValue={payload?.get('name') as string}
         />
 
@@ -51,6 +52,7 @@ export function SignUpForm() {
           name="email"
           type="email"
           id="email"
+          placeholder="exemplo@email.com"
           defaultValue={payload?.get('email') as string}
         />
 
@@ -67,6 +69,7 @@ export function SignUpForm() {
           name="password"
           type="password"
           id="password"
+          placeholder="Digite sua senha"
           defaultValue={payload?.get('password') as string}
         />
 
@@ -83,6 +86,7 @@ export function SignUpForm() {
           name="password_confirmation"
           type="password"
           id="password_confirmation"
+          placeholder="Confirme sua senha"
           defaultValue={payload?.get('password_confirmation') as string}
         />
 

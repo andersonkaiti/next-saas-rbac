@@ -42,6 +42,7 @@ export function SignInForm() {
           name="email"
           type="email"
           id="email"
+          placeholder="exemplo@email.com"
           defaultValue={
             searchParams.get('email') ?? (payload?.get('email') as string)
           }
@@ -60,6 +61,7 @@ export function SignInForm() {
           name="password"
           type="password"
           id="password"
+          placeholder="Digite sua senha"
           defaultValue={payload?.get('password') as string}
         />
 
