@@ -1,31 +1,45 @@
 'use client'
 
+import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Separator } from '@components/ui/separator'
+import { zodResolver } from '@hookform/resolvers/zod'
+import githubIcon from '@assets/github-icon.svg'
+import { AlertTriangle, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-
-import githubIcon from '@assets/github-icon.svg'
-import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
-import { AlertTriangle, Loader2 } from 'lucide-react'
-import { useActionState } from 'react'
+import { useForm } from 'react-hook-form'
 import { signInWithGithub } from '../actions'
-import { signUpAction, type IActionState } from './actions'
+import { signUpAction } from './actions'
+import { signUpSchema, type SignUpSchema } from './sign-up-schema'
 
 export function SignUpForm() {
-  const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(signUpAction, {} as IActionState)
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpSchema>({
+    resolver: zodResolver(signUpSchema),
+  })
+
+  async function onSubmit(data: SignUpSchema) {
+    const result = await signUpAction(data)
+    if (result?.success === false) {
+      setError('root', { message: result.message })
+    }
+  }
 
   return (
-    <form action={formAction} className="space-y-4">
-      {success === false && message && (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {errors.root?.message && (
         <Alert variant="destructive">
           <AlertTriangle className="size-4" />
           <AlertTitle>Sign up failed!</AlertTitle>
           <AlertDescription>
-            <p>{message}</p>
+            <p>{errors.root.message}</p>
           </AlertDescription>
         </Alert>
       )}
@@ -33,15 +47,13 @@ export function SignUpForm() {
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
         <Input
-          name="name"
+          {...register('name')}
           id="name"
           placeholder="Seu nome completo"
-          defaultValue={payload?.get('name') as string}
         />
-
-        {errors?.name && (
+        {errors.name && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.name[0]}
+            {errors.name.message}
           </p>
         )}
       </div>
@@ -49,16 +61,14 @@ export function SignUpForm() {
       <div className="space-y-2">
         <Label htmlFor="email">E-mail</Label>
         <Input
-          name="email"
+          {...register('email')}
           type="email"
           id="email"
           placeholder="exemplo@email.com"
-          defaultValue={payload?.get('email') as string}
         />
-
-        {errors?.email && (
+        {errors.email && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.email[0]}
+            {errors.email.message}
           </p>
         )}
       </div>
@@ -66,16 +76,14 @@ export function SignUpForm() {
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
         <Input
-          name="password"
+          {...register('password')}
           type="password"
           id="password"
           placeholder="Digite sua senha"
-          defaultValue={payload?.get('password') as string}
         />
-
-        {errors?.password && (
+        {errors.password && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.password[0]}
+            {errors.password.message}
           </p>
         )}
       </div>
@@ -83,22 +91,20 @@ export function SignUpForm() {
       <div className="space-y-2">
         <Label htmlFor="password_confirmation">Confirm your password</Label>
         <Input
-          name="password_confirmation"
+          {...register('password_confirmation')}
           type="password"
           id="password_confirmation"
           placeholder="Confirme sua senha"
-          defaultValue={payload?.get('password_confirmation') as string}
         />
-
-        {errors?.password_confirmation && (
+        {errors.password_confirmation && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.password_confirmation[0]}
+            {errors.password_confirmation.message}
           </p>
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? (
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? (
           <Loader2 className="size-4 animate-spin" />
         ) : (
           'Create account'
@@ -112,10 +118,10 @@ export function SignUpForm() {
       <Separator />
 
       <Button
-        type="submit"
-        formAction={signInWithGithub}
+        type="button"
         variant="outline"
         className="w-full"
+        onClick={() => void signInWithGithub()}
       >
         <Image src={githubIcon} className="mr-2 size-4" alt="" />
         Sign up with GitHub
