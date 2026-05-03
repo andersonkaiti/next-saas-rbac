@@ -5,88 +5,94 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Textarea } from '@components/ui/textarea'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { useActionState, useEffect } from 'react'
-import type { IActionState } from './actions'
-import type { ProjectSchema } from './project-schema'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { projectSchema, type ProjectSchema } from './project-schema'
 
 interface IProjectForm {
   initialData?: (ProjectSchema & { slug: string }) | null
-  action: (_: unknown, data: FormData) => Promise<IActionState>
+  action: (data: ProjectSchema) => Promise<{ success: boolean; message: string | null }>
 }
 
 export function ProjectForm({ action, initialData }: IProjectForm) {
-  const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(action, {} as IActionState)
-
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const queryClient = useQueryClient()
-
   const { slug: org } = useParams<{ slug: string }>()
 
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [org, 'projects'],
-    })
-  }, [success])
+  const {
+    register,
+    handleSubmit,
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm<ProjectSchema>({
+    resolver: zodResolver(projectSchema),
+    defaultValues: {
+      name: initialData?.name ?? '',
+      description: initialData?.description ?? '',
+    },
+  })
+
+  async function onSubmit(data: ProjectSchema) {
+    clearErrors('root')
+    setSuccessMessage(null)
+    const result = await action(data)
+    if (!result.success) {
+      setError('root', { message: result.message ?? undefined })
+    } else {
+      setSuccessMessage(result.message)
+      queryClient.invalidateQueries({ queryKey: [org, 'projects'] })
+    }
+  }
 
   return (
-    <form action={formAction} className="space-y-4">
-      {success === false && message && (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {errors.root?.message && (
         <Alert variant="destructive">
           <AlertTriangle className="size-4" />
           <AlertTitle>Save project failed!</AlertTitle>
           <AlertDescription>
-            <p>{message}</p>
+            <p>{errors.root.message}</p>
           </AlertDescription>
         </Alert>
       )}
 
-      {success === true && message && (
+      {successMessage && (
         <Alert variant="success">
           <AlertTriangle className="size-4" />
           <AlertTitle>Success!</AlertTitle>
           <AlertDescription>
-            <p>{message}</p>
+            <p>{successMessage}</p>
           </AlertDescription>
         </Alert>
       )}
 
       <div className="space-y-2">
         <Label htmlFor="name">Project name</Label>
-        <Input
-          name="name"
-          id="name"
-          defaultValue={initialData?.name ?? (payload?.get('name') as string)}
-        />
-
-        {errors?.name && (
+        <Input {...register('name')} id="name" />
+        {errors.name && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.name[0]}
+            {errors.name.message}
           </p>
         )}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
-        <Textarea
-          name="description"
-          id="description"
-          defaultValue={
-            initialData?.description ?? (payload?.get('description') as string)
-          }
-        />
-
-        {errors?.description && (
+        <Textarea {...register('description')} id="description" />
+        {errors.description && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.description[0]}
+            {errors.description.message}
           </p>
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? (
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? (
           <Loader2 className="size-4 animate-spin" />
         ) : (
           'Save project'

@@ -6,128 +6,48 @@ import { deleteProject } from '@http/delete-project'
 import { updateProject } from '@http/update-project'
 import { HTTPError } from 'ky'
 import { revalidateTag } from 'next/cache'
-import z from 'zod'
-import { projectSchema } from './project-schema'
+import type { ProjectSchema } from './project-schema'
 
-export interface IActionState {
-  success: boolean
-  message: string | null
-  errors: z.inferFlattenedErrors<typeof projectSchema>['fieldErrors'] | null
-  payload: FormData | null
-}
-
-export async function createProjectAction(_: unknown, data: FormData) {
-  const result = projectSchema.safeParse(Object.fromEntries(data))
-
-  if (!result.success) {
-    const errors = result.error.flatten().fieldErrors
-
-    return {
-      success: false,
-      message: null,
-      errors,
-      payload: data,
-    }
-  }
-
-  const { name, description } = result.data
+export async function createProjectAction(data: ProjectSchema) {
+  const currentOrg = (await getCurrentOrg()) as string
 
   try {
-    await createProject({
-      org: (await getCurrentOrg()) as string,
-      name,
-      description,
-    })
+    await createProject({ org: currentOrg, name: data.name, description: data.description })
+    revalidateTag(`${currentOrg}/projects`, {})
   } catch (err) {
     if (err instanceof HTTPError) {
       const { message } = await err.response.json()
-
-      return {
-        success: false,
-        message,
-        errors: null,
-        payload: data,
-      }
+      return { success: false as const, message }
     }
-
     return {
-      success: false,
+      success: false as const,
       message: 'Unexpected error, try again in a few minutes.',
-      errors: null,
-      payload: data,
     }
   }
-
-  return {
-    success: true,
-    message: 'Successfully saved the project.',
-    errors: null,
-    payload: null,
-  }
+  return { success: true as const, message: 'Successfully saved the project.' }
 }
 
-export async function updateProjectAction(
-  projectId: string,
-  _: unknown,
-  data: FormData
-) {
-  const result = projectSchema.safeParse(Object.fromEntries(data))
-
-  if (!result.success) {
-    const errors = result.error.flatten().fieldErrors
-
-    return {
-      success: false,
-      message: null,
-      errors,
-      payload: data,
-    }
-  }
-
-  const { name, description } = result.data
+export async function updateProjectAction(projectId: string, data: ProjectSchema) {
+  const currentOrg = (await getCurrentOrg()) as string
 
   try {
-    await updateProject({
-      org: (await getCurrentOrg()) as string,
-      projectId,
-      name,
-      description,
-    })
+    await updateProject({ org: currentOrg, projectId, name: data.name, description: data.description })
+    revalidateTag(`${currentOrg}/projects`, {})
   } catch (err) {
     if (err instanceof HTTPError) {
       const { message } = await err.response.json()
-
-      return {
-        success: false,
-        message,
-        errors: null,
-        payload: data,
-      }
+      return { success: false as const, message }
     }
-
     return {
-      success: false,
+      success: false as const,
       message: 'Unexpected error, try again in a few minutes.',
-      errors: null,
-      payload: data,
     }
   }
-
-  return {
-    success: true,
-    message: 'Successfully saved the project.',
-    errors: null,
-    payload: null,
-  }
+  return { success: true as const, message: 'Successfully saved the project.' }
 }
 
 export async function deleteProjectAction(projectId: string) {
   const currentOrg = await getCurrentOrg()
-
-  await deleteProject({
-    org: currentOrg as string,
-    projectId,
-  })
-
+  await deleteProject({ org: currentOrg as string, projectId })
   revalidateTag(`${currentOrg}/projects`, {})
 }
