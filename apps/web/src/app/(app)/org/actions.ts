@@ -4,115 +4,39 @@ import { getCurrentOrg } from '@auth/auth'
 import { createOrganization } from '@http/create-organization'
 import { updateOrganization } from '@http/update-organization'
 import { HTTPError } from 'ky'
-import z from 'zod'
-import { organizationSchema } from './organization-schema'
+import type { OrganizationSchema } from './organization-schema'
 
-export interface IActionState {
-  success: boolean
-  message: string | null
-  errors:
-    | z.inferFlattenedErrors<typeof organizationSchema>['fieldErrors']
-    | null
-  payload: FormData | null
-}
-
-export async function createOrganizationAction(_: unknown, data: FormData) {
-  const result = organizationSchema.safeParse(Object.fromEntries(data))
-
-  if (!result.success) {
-    const errors = result.error.flatten().fieldErrors
-
-    return {
-      success: false,
-      message: null,
-      errors,
-      payload: data,
-    }
-  }
-
-  const { name, domain, shouldAttachUsersByDomain } = result.data
-
+export async function createOrganizationAction(data: OrganizationSchema) {
   try {
-    await createOrganization({
-      name,
-      domain,
-      shouldAttachUsersByDomain,
-    })
+    await createOrganization(data)
   } catch (err) {
     if (err instanceof HTTPError) {
       const { message } = await err.response.json()
-
-      return {
-        success: false,
-        message,
-        errors: null,
-        payload: data,
-      }
+      return { success: false as const, message }
     }
-
     return {
-      success: false,
+      success: false as const,
       message: 'Unexpected error, try again in a few minutes.',
-      errors: null,
-      payload: data,
     }
   }
-
-  return {
-    success: true,
-    message: 'Successfully saved the organization.',
-    errors: null,
-    payload: null,
-  }
+  return { success: true as const, message: 'Successfully saved the organization.' }
 }
 
-export async function updateOrganizationAction(_: unknown, data: FormData) {
-  const result = organizationSchema.safeParse(Object.fromEntries(data))
-
-  if (!result.success) {
-    const errors = result.error.flatten().fieldErrors
-
-    return {
-      success: false,
-      message: null,
-      errors,
-      payload: data,
-    }
-  }
-
-  const { name, domain, shouldAttachUsersByDomain } = result.data
-
+export async function updateOrganizationAction(data: OrganizationSchema) {
   try {
     await updateOrganization({
       org: (await getCurrentOrg()) as string,
-      name,
-      domain,
-      shouldAttachUsersByDomain,
+      ...data,
     })
   } catch (err) {
     if (err instanceof HTTPError) {
       const { message } = await err.response.json()
-
-      return {
-        success: false,
-        message,
-        errors: null,
-        payload: data,
-      }
+      return { success: false as const, message }
     }
-
     return {
-      success: false,
+      success: false as const,
       message: 'Unexpected error, try again in a few minutes.',
-      errors: null,
-      payload: data,
     }
   }
-
-  return {
-    success: true,
-    message: 'Successfully saved the organization.',
-    errors: null,
-    payload: null,
-  }
+  return { success: true as const, message: 'Successfully saved the organization.' }
 }

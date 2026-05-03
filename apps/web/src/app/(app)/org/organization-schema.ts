@@ -22,10 +22,7 @@ export const organizationSchema = z
           message: 'Please, enter a valid domain.',
         }
       ),
-    shouldAttachUsersByDomain: z
-      .union([z.literal('on'), z.literal('off'), z.boolean()])
-      .transform((value) => value === true || value === 'on')
-      .default(false),
+    shouldAttachUsersByDomain: z.boolean().default(false),
   })
   .refine(
     (data) => {
