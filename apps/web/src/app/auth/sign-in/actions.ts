@@ -5,58 +5,17 @@ import { signInWithPassword } from '@http/sign-in-with-password'
 import { HTTPError } from 'ky'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { z } from 'zod'
+import type { SignInSchema } from './sign-in-schema'
 
-export interface IActionState {
-  success: boolean
-  message: string | null
-  errors: z.inferFlattenedErrors<typeof signInSchema>['fieldErrors'] | null
-  payload: FormData | null
-}
+const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7
 
-const ONE_MINUTE_IN_SECONDS = 60
-const ONE_HOUR_IN_SECONDS = ONE_MINUTE_IN_SECONDS * 60
-const ONE_DAY_IN_SECONDS = ONE_HOUR_IN_SECONDS * 24
-const ONE_WEEK_IN_SECONDS = ONE_DAY_IN_SECONDS * 7
-
-const signInSchema = z.object({
-  email: z
-    .string()
-    .email({ message: 'Please, provide a valid e-mail address.' }),
-  password: z.string().min(1, { message: 'Please, provide your password.' }),
-})
-
-export async function signInWithEmailAndPassword(_: unknown, data: FormData) {
-  const result = signInSchema.safeParse(Object.fromEntries(data))
-
-  if (!result.success) {
-    const errors = result.error.flatten().fieldErrors
-
-    return {
-      success: false,
-      message: null,
-      errors,
-      payload: data,
-    }
-  }
-
-  const { email, password } = result.data
-
+export async function signInWithEmailAndPassword(data: SignInSchema) {
   try {
-    const { token } = await signInWithPassword({
-      email: email,
-      password: password,
-    })
-
+    const { token } = await signInWithPassword(data)
     const cookieStorage = await cookies()
-
-    cookieStorage.set('token', token, {
-      path: '/',
-      maxAge: ONE_WEEK_IN_SECONDS,
-    })
+    cookieStorage.set('token', token, { path: '/', maxAge: ONE_WEEK_IN_SECONDS })
 
     const inviteId = cookieStorage.get('inviteId')?.value
-
     if (inviteId) {
       try {
         await acceptInvite(inviteId)
@@ -66,22 +25,12 @@ export async function signInWithEmailAndPassword(_: unknown, data: FormData) {
   } catch (err) {
     if (err instanceof HTTPError) {
       const { message } = await err.response.json()
-
-      return {
-        success: false,
-        message,
-        errors: null,
-        payload: data,
-      }
+      return { success: false as const, message }
     }
-
     console.error(err)
-
     return {
-      success: false,
+      success: false as const,
       message: 'Unexpected error, try again in a few minutes.',
-      errors: null,
-      payload: data,
     }
   }
 

@@ -1,37 +1,52 @@
 'use client'
 
+import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Separator } from '@components/ui/separator'
+import { zodResolver } from '@hookform/resolvers/zod'
+import githubIcon from '@assets/github-icon.svg'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { signInWithEmailAndPassword, type IActionState } from './actions'
-
-import githubIcon from '@assets/github-icon.svg'
-import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { useSearchParams } from 'next/navigation'
-import { useActionState } from 'react'
+import { useForm } from 'react-hook-form'
 import { signInWithGithub } from '../actions'
+import { signInWithEmailAndPassword } from './actions'
+import { signInSchema, type SignInSchema } from './sign-in-schema'
 
 export function SignInForm() {
   const searchParams = useSearchParams()
 
-  const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(
-      signInWithEmailAndPassword,
-      {} as IActionState
-    )
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignInSchema>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
+      password: '',
+    },
+  })
+
+  async function onSubmit(data: SignInSchema) {
+    const result = await signInWithEmailAndPassword(data)
+    if (result?.success === false) {
+      setError('root', { message: result.message })
+    }
+  }
 
   return (
-    <form action={formAction} className="space-y-4">
-      {success === false && message && (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {errors.root?.message && (
         <Alert variant="destructive">
           <AlertTriangle className="size-4" />
           <AlertTitle>Sign in failed!</AlertTitle>
           <AlertDescription>
-            <p>{message}</p>
+            <p>{errors.root.message}</p>
           </AlertDescription>
         </Alert>
       )}
@@ -39,18 +54,14 @@ export function SignInForm() {
       <div className="space-y-2">
         <Label htmlFor="email">E-mail</Label>
         <Input
-          name="email"
+          {...register('email')}
           type="email"
           id="email"
           placeholder="exemplo@email.com"
-          defaultValue={
-            searchParams.get('email') ?? (payload?.get('email') as string)
-          }
         />
-
-        {errors?.email && (
+        {errors.email && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.email[0]}
+            {errors.email.message}
           </p>
         )}
       </div>
@@ -58,19 +69,16 @@ export function SignInForm() {
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
         <Input
-          name="password"
+          {...register('password')}
           type="password"
           id="password"
           placeholder="Digite sua senha"
-          defaultValue={payload?.get('password') as string}
         />
-
-        {errors?.password && (
+        {errors.password && (
           <p className="text-xs font-medium text-red-500 dark:text-red-400">
-            {errors.password[0]}
+            {errors.password.message}
           </p>
         )}
-
         <Link
           href="/auth/forgot-password"
           className="text-foreground text-xs font-medium hover:underline"
@@ -79,8 +87,8 @@ export function SignInForm() {
         </Link>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? (
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? (
           <Loader2 className="size-4 animate-spin" />
         ) : (
           'Sign in with e-mail'
@@ -94,10 +102,10 @@ export function SignInForm() {
       <Separator />
 
       <Button
-        type="submit"
-        formAction={signInWithGithub}
+        type="button"
         variant="outline"
         className="w-full"
+        onClick={() => void signInWithGithub()}
       >
         <Image src={githubIcon} className="mr-2 size-4" alt="" />
         Sign in with GitHub
