@@ -10,35 +10,59 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@components/ui/select'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertTriangle, Loader2, UserPlus } from 'lucide-react'
-import { useActionState } from 'react'
-import { createInviteAction, type IActionState } from './actions'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { createInviteAction } from './actions'
+import { inviteSchema, type InviteSchema } from './invite-schema'
 
 export function CreateInviteForm() {
-  const [{ success, message, errors, payload }, formAction, isPending] =
-    useActionState<IActionState, FormData>(
-      createInviteAction,
-      {} as IActionState
-    )
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    clearErrors,
+    reset,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<InviteSchema>({
+    resolver: zodResolver(inviteSchema),
+    defaultValues: { email: '', role: 'MEMBER' },
+  })
+
+  async function onSubmit(data: InviteSchema) {
+    clearErrors('root')
+    setSuccessMessage(null)
+    const result = await createInviteAction(data)
+    if (!result.success) {
+      setError('root', { message: result.message ?? undefined })
+    } else {
+      setSuccessMessage(result.message)
+      reset()
+    }
+  }
 
   return (
-    <form action={formAction} className="space-y-4">
-      {success === false && message && (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {errors.root?.message && (
         <Alert variant="destructive">
           <AlertTriangle className="size-4" />
           <AlertTitle>Invite failed!</AlertTitle>
           <AlertDescription>
-            <p>{message}</p>
+            <p>{errors.root.message}</p>
           </AlertDescription>
         </Alert>
       )}
 
-      {success === true && message && (
+      {successMessage && (
         <Alert variant="success">
           <AlertTriangle className="size-4" />
           <AlertTitle>Success!</AlertTitle>
           <AlertDescription>
-            <p>{message}</p>
+            <p>{successMessage}</p>
           </AlertDescription>
         </Alert>
       )}
@@ -46,33 +70,37 @@ export function CreateInviteForm() {
       <div className="flex flex-col items-start gap-2 sm:flex-row">
         <div className="w-full space-y-2">
           <Input
-            name="email"
+            {...register('email')}
             id="email"
             type="email"
             placeholder="john@example.com"
-            defaultValue={payload?.get('email') as string}
           />
-
-          {errors?.email && (
+          {errors.email && (
             <p className="text-xs font-medium text-red-500 dark:text-red-400">
-              {errors.email[0]}
+              {errors.email.message}
             </p>
           )}
         </div>
 
-        <Select name="role" defaultValue="MEMBER">
-          <SelectTrigger className="w-full sm:w-fit">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ADMIN">Admin</SelectItem>
-            <SelectItem value="MEMBER">Member</SelectItem>
-            <SelectItem value="BILLING">Billing</SelectItem>
-          </SelectContent>
-        </Select>
+        <Controller
+          name="role"
+          control={control}
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className="w-full sm:w-fit">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ADMIN">Admin</SelectItem>
+                <SelectItem value="MEMBER">Member</SelectItem>
+                <SelectItem value="BILLING">Billing</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
 
-        <Button type="submit" className="w-full sm:w-fit" disabled={isPending}>
-          {isPending ? (
+        <Button type="submit" className="w-full sm:w-fit" disabled={isSubmitting}>
+          {isSubmitting ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
             <>
