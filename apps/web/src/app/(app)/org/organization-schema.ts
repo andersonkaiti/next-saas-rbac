@@ -22,7 +22,7 @@ export const organizationSchema = z
           message: 'Please, enter a valid domain.',
         }
       ),
-    shouldAttachUsersByDomain: z.boolean().default(false),
+    shouldAttachUsersByDomain: z.boolean(),
   })
   .refine(
     (data) => {
