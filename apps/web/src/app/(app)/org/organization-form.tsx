@@ -5,11 +5,11 @@ import { Button } from '@components/ui/button'
 import { Checkbox } from '@components/ui/checkbox'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertTriangle, Loader2 } from 'lucide-react'
-import { useState, useId } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { organizationSchema, type OrganizationSchema } from './organization-schema'
+import { useId } from 'react'
+import { Controller } from 'react-hook-form'
+import type { OrganizationSchema } from './organization-schema'
+import { useOrganizationForm } from './use-organization-form'
 
 interface IOrganizationFormProps {
   initialData?: OrganizationSchema | null
@@ -18,34 +18,15 @@ interface IOrganizationFormProps {
 
 export function OrganizationForm({ initialData = null, action }: IOrganizationFormProps) {
   const shouldAttachUsersByDomainId = useId()
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-
   const {
     register,
     handleSubmit,
-    setError,
-    clearErrors,
     control,
-    formState: { errors, isSubmitting },
-  } = useForm<OrganizationSchema>({
-    resolver: zodResolver(organizationSchema),
-    defaultValues: {
-      name: initialData?.name ?? '',
-      domain: initialData?.domain ?? '',
-      shouldAttachUsersByDomain: initialData?.shouldAttachUsersByDomain ?? false,
-    },
-  })
-
-  async function onSubmit(data: OrganizationSchema) {
-    clearErrors('root')
-    setSuccessMessage(null)
-    const result = await action(data)
-    if (!result.success) {
-      setError('root', { message: result.message ?? undefined })
-    } else {
-      setSuccessMessage(result.message)
-    }
-  }
+    errors,
+    isSubmitting,
+    onSubmit,
+    successMessage,
+  } = useOrganizationForm({ initialData, action })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
