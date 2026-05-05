@@ -5,13 +5,9 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Textarea } from '@components/ui/textarea'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
 import { AlertTriangle, Loader2 } from 'lucide-react'
-import { useParams } from 'next/navigation'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { projectSchema, type ProjectSchema } from './project-schema'
+import type { ProjectSchema } from './project-schema'
+import { useProjectForm } from './use-project-form'
 
 interface IProjectForm {
   initialData?: (ProjectSchema & { slug: string }) | null
@@ -19,35 +15,8 @@ interface IProjectForm {
 }
 
 export function ProjectForm({ action, initialData }: IProjectForm) {
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-  const queryClient = useQueryClient()
-  const { slug: org } = useParams<{ slug: string }>()
-
-  const {
-    register,
-    handleSubmit,
-    setError,
-    clearErrors,
-    formState: { errors, isSubmitting },
-  } = useForm<ProjectSchema>({
-    resolver: zodResolver(projectSchema),
-    defaultValues: {
-      name: initialData?.name ?? '',
-      description: initialData?.description ?? '',
-    },
-  })
-
-  async function onSubmit(data: ProjectSchema) {
-    clearErrors('root')
-    setSuccessMessage(null)
-    const result = await action(data)
-    if (!result.success) {
-      setError('root', { message: result.message ?? undefined })
-    } else {
-      setSuccessMessage(result.message)
-      queryClient.invalidateQueries({ queryKey: [org, 'projects'] })
-    }
-  }
+  const { register, handleSubmit, errors, isSubmitting, onSubmit, successMessage } =
+    useProjectForm({ action, initialData })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
