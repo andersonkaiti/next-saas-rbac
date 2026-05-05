@@ -3,6 +3,7 @@ import { getProfile } from '@http/get-profile'
 import { defineAbilityFor } from '@saas/auth'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { cache } from 'react'
 
 export async function isAuthenticated() {
   return !!(await cookies()).get('token')?.value
@@ -12,7 +13,7 @@ export async function getCurrentOrg() {
   return (await cookies()).get('org')?.value ?? null
 }
 
-export async function getCurrentMembership() {
+export const getCurrentMembership = cache(async () => {
   const org = await getCurrentOrg()
 
   if (!org) {
@@ -20,9 +21,9 @@ export async function getCurrentMembership() {
   }
 
   return (await getMembership(org)).membership
-}
+})
 
-export async function ability() {
+export const ability = cache(async () => {
   const membership = await getCurrentMembership()
 
   if (!membership) {
@@ -33,7 +34,7 @@ export async function ability() {
     id: membership.userId,
     role: membership.role,
   })
-}
+})
 
 export async function auth() {
   const cookieStorage = await cookies()
