@@ -4,6 +4,7 @@ import { getCurrentOrg } from '@auth/auth'
 import { createOrganization } from '@http/create-organization'
 import { updateOrganization } from '@http/update-organization'
 import { HTTPError } from 'ky'
+import { revalidateTag } from 'next/cache'
 import type { OrganizationSchema } from './organization-schema'
 
 export async function createOrganizationAction(data: OrganizationSchema) {
@@ -19,6 +20,7 @@ export async function createOrganizationAction(data: OrganizationSchema) {
       message: 'Unexpected error, try again in a few minutes.',
     }
   }
+  revalidateTag('organizations')
   return { success: true as const, message: 'Successfully saved the organization.' }
 }
 
@@ -38,5 +40,6 @@ export async function updateOrganizationAction(data: OrganizationSchema) {
       message: 'Unexpected error, try again in a few minutes.',
     }
   }
+  revalidateTag('organizations')
   return { success: true as const, message: 'Successfully saved the organization.' }
 }
