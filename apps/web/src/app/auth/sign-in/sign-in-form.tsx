@@ -5,39 +5,19 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Separator } from '@components/ui/separator'
-import { zodResolver } from '@hookform/resolvers/zod'
 import githubIcon from '@assets/github-icon.svg'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useForm } from 'react-hook-form'
 import { signInWithGithub } from '../actions'
-import { signInWithEmailAndPassword } from './actions'
-import { signInSchema, type SignInSchema } from './sign-in-schema'
+import { useSignInForm } from './use-sign-in-form'
 
 export function SignInForm() {
   const searchParams = useSearchParams()
-
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors, isSubmitting },
-  } = useForm<SignInSchema>({
-    resolver: zodResolver(signInSchema),
-    defaultValues: {
-      email: searchParams.get('email') ?? '',
-      password: '',
-    },
-  })
-
-  async function onSubmit(data: SignInSchema) {
-    const result = await signInWithEmailAndPassword(data)
-    if (result?.success === false) {
-      setError('root', { message: result.message })
-    }
-  }
+  const { register, handleSubmit, errors, isSubmitting, onSubmit } = useSignInForm(
+    searchParams.get('email') ?? ''
+  )
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
