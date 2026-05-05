@@ -1,7 +1,8 @@
 import { auth } from '@auth/auth'
 import { ChevronDown, LogOut } from 'lucide-react'
 import Link from 'next/link'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Avatar, AvatarFallback } from './ui/avatar'
+import { OptimizedAvatarImage } from './avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +30,9 @@ export async function ProfileButton() {
           <span className="text-muted-foreground text-xs">{user.email}</span>
         </div>
         <Avatar className="size-8">
-          {user.avatarUrl && <AvatarImage src={user.avatarUrl} />}
+          {user.avatarUrl && (
+            <OptimizedAvatarImage src={user.avatarUrl} alt={user.name ?? ''} width={32} height={32} />
+          )}
           {user.name && (
             <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
           )}

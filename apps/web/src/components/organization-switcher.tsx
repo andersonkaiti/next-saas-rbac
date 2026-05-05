@@ -2,7 +2,8 @@ import { getCurrentOrg } from '@auth/auth'
 import { getOrganizations } from '@http/get-organizations'
 import { ChevronsUpDown, PlusCircle } from 'lucide-react'
 import Link from 'next/link'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Avatar, AvatarFallback } from './ui/avatar'
+import { OptimizedAvatarImage } from './avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +30,7 @@ export async function OrganizationSwitcher() {
           <>
             <Avatar className="size-4">
               {currentOrganization.avatarUrl && (
-                <AvatarImage src={currentOrganization.avatarUrl} />
+                <OptimizedAvatarImage src={currentOrganization.avatarUrl} alt={currentOrganization.name} width={16} height={16} />
               )}
               <AvatarFallback />
             </Avatar>
@@ -55,7 +56,7 @@ export async function OrganizationSwitcher() {
               <Link href={`/org/${organization.slug}`}>
                 <Avatar className="mr-2 size-4">
                   {organization.avatarUrl && (
-                    <AvatarImage src={organization.avatarUrl} />
+                    <OptimizedAvatarImage src={organization.avatarUrl} alt={organization.name} width={16} height={16} />
                   )}
                   <AvatarFallback />
                 </Avatar>

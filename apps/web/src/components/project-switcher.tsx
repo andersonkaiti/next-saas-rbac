@@ -5,7 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import { ChevronsUpDown, Loader2, PlusCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Avatar, AvatarFallback } from './ui/avatar'
+import { OptimizedAvatarImage } from './avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,7 +49,7 @@ export function ProjectSwitcher() {
               <>
                 <Avatar className="size-4">
                   {currentProject.avatarUrl && (
-                    <AvatarImage src={currentProject.avatarUrl} />
+                    <OptimizedAvatarImage src={currentProject.avatarUrl} alt={currentProject.name} width={16} height={16} />
                   )}
                   <AvatarFallback />
                 </Avatar>
@@ -82,7 +83,7 @@ export function ProjectSwitcher() {
                 <Link href={`/org/${orgSlug}/project/${project.slug}`}>
                   <Avatar className="mr-2 size-4">
                     {project.avatarUrl && (
-                      <AvatarImage src={project.avatarUrl} />
+                      <OptimizedAvatarImage src={project.avatarUrl} alt={project.name} width={16} height={16} />
                     )}
                     <AvatarFallback />
                   </Avatar>

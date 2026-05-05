@@ -1,5 +1,6 @@
 import { ability, getCurrentOrg } from '@auth/auth'
-import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar'
+import { Avatar, AvatarFallback } from '@components/ui/avatar'
+import { OptimizedAvatarImage } from '@components/avatar'
 import { Button } from '@components/ui/button'
 import {
   Card,
@@ -79,7 +80,7 @@ export async function ProjectList() {
             <Avatar className="size-4">
               <AvatarFallback />
               {project.owner.avatarUrl && (
-                <AvatarImage src={project.owner.avatarUrl} />
+                <OptimizedAvatarImage src={project.owner.avatarUrl} alt={project.owner.name ?? ''} width={16} height={16} />
               )}
             </Avatar>
 

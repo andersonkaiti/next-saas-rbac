@@ -1,5 +1,6 @@
 import { ability, getCurrentOrg } from '@auth/auth'
-import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar'
+import { Avatar, AvatarFallback } from '@components/ui/avatar'
+import { OptimizedAvatarImage } from '@components/avatar'
 import { Table, TableBody, TableCell, TableRow } from '@components/ui/table'
 import { getMembers } from '@http/get-members'
 import { getMembership } from '@http/get-membership'
@@ -36,13 +37,7 @@ export async function MemberList() {
                   <Avatar>
                     <AvatarFallback />
                     {member.avatarUrl && (
-                      <AvatarImage
-                        src={member.avatarUrl}
-                        width={32}
-                        height={32}
-                        alt=""
-                        className="aspect-square size-full"
-                      ></AvatarImage>
+                      <OptimizedAvatarImage src={member.avatarUrl} alt={member.name ?? ''} width={32} height={32} />
                     )}
                   </Avatar>
                 </TableCell>
