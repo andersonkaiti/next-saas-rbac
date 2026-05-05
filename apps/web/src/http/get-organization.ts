@@ -15,5 +15,11 @@ interface IGetOrganizationResponse {
 }
 
 export async function getOrganization(org: string) {
-  return await api.get(`organizations/${org}`).json<IGetOrganizationResponse>()
+  return await api
+    .get(`organizations/${org}`, {
+      next: {
+        tags: ['organizations', `${org}/organization`],
+      },
+    })
+    .json<IGetOrganizationResponse>()
 }
